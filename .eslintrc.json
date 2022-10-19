@@ -1,0 +1,3 @@
+{
+  "extends": ["eslint:recommmended", "next/core-web-vitals"]
+}
