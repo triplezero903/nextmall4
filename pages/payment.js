@@ -30,7 +30,7 @@ export default function PaymentScreen() {
       "cart",
       JSON.stringify({ ...cart, paymentMethod: selectedPaymentMethod })
     );
-    router.push("/placeorder");
+    Router.push("/placeorder");
   };
 
   return (
