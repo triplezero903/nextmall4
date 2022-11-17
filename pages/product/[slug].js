@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 //import { useRouter } from "next/router";
-import Router form "next/router"
+import Router from "next/router"
 import React, { useContext } from "react";
 import Layout from "../../components/Layout";
 import Product from "../../models/Product";
