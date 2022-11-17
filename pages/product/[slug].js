@@ -3,24 +3,28 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import React, { useContext } from "react";
 import Layout from "../../components/Layout";
+import Product from "../../models/Product";
 import data from "../../utils/data";
+import db from "../../utils/db";
 import { Store } from "../../utils/Store";
+import axios from "axios"
 
-export default function ProductScreen() {
+export default function ProductScreen({ product }) {
   const { state, dispatch } = useContext(Store);
-  const { query } = useRouter();
-  const { slug } = query;
-  const product = data.products.find((x) => x.slug === slug);
+  //const { query } = useRouter();
+  //const { slug } = query;
+  //const product = data.products.find((x) => x.slug === slug);
 
   if (!product) {
-    return <div>Product Not Found</div>;
+    return <Layout title="Product Not Found">상품을 찾을 수 없습니다!!</Layout>;
   }
 
-  const addToCartHandler = () => {
+  const addToCartHandler = async() => {
     const existItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = existItem ? existItem.quantity + 1 : 1;
+    const data = await axios.get(`/api/products/${product._id}`)
 
-    if (product.countInStock < quantity) {
+    if (data.countInStock < quantity) {
       alert("죄송합니다. 재고가 부족합니다.");
       return;
     }
@@ -31,7 +35,7 @@ export default function ProductScreen() {
   return (
     <Layout title={product.name}>
       <div className="py-2">
-        <Link href="/">Back to products</Link>
+        <Link href="/"> 상품으로 돌아가기</Link>
       </div>
       <div className="grid md:grid-cols-4 md:gap-3">
         <div className="md:col-span-2">
@@ -60,11 +64,11 @@ export default function ProductScreen() {
         <div>
           <div className="card p-5">
             <div className="mb-2 flex justify-between">
-              <div>Price</div>
+              <div>가격</div>
               <div>${product.price}</div>
             </div>
             <div className="mb-2 flex justify-between">
-              <div>Status</div>
+              <div>재고 상태</div>
               <div>{product.countInStock > 0 ? "In stock" : "Unavailable"}</div>
             </div>
             <button
@@ -78,4 +82,19 @@ export default function ProductScreen() {
       </div>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { slug } = params;
+
+  await db.connect();
+  const product = await Product.findOne({ slug }).lean();
+  await db.disconnect();
+
+  return {
+    props: {
+      product: product ? db.convertDocToObj(product) : null,
+    },
+  };
 }
