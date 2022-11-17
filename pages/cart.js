@@ -6,6 +6,8 @@ import Layout from "../components/Layout";
 import { Store } from "../utils/Store";
 import { XCircleIcon } from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function CartScreen() {
   const router = useRouter();
@@ -17,9 +19,16 @@ function CartScreen() {
   const removeItemHandler = (item) => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
-  const updateCartHandler = (item, qty) => {
+  const updateCartHandler = async (item, qty) => {
     const quantity = Number(qty);
+    const { data } = await axios.get(`/api/products/${item._id}`)
+
+    if(data.countInStock < quantity) {
+      return toast.error("죄송합니다. 재고가 다 나갔습니다.")
+    }
     dispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
+
+    toast.success("상품이 카트에 업데이트 되었습니다.")
   };
   return (
     <Layout title={"Shopping Cart"}>
