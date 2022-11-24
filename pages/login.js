@@ -38,6 +38,48 @@ export default function LoginScreen() {
     }
   };
 
+  const githubLoginHandler = async () => {
+    try {
+    const result = await signIn('github', { redirect: false,
+    })
+    console.log('Github login: ' + result)
+    } catch (err) {
+    toast.error(getError(err))
+    }
+    }
+
+    const googleLoginHandler = async () => {
+      try {
+      // eslint-disable-next-line no-unused-vars
+      const result = await signIn('google', {
+      redirect: false,
+      })
+      } catch (err) {
+      toast.error(getError(err))
+      }
+    }      
+
+    const kakaoLoginHandler = async () => {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const result = await signIn("kakao", {
+          redirect: false,
+        })
+      } catch (err) {
+        toast.error(getError(err))
+      }
+    }
+
+    const naverLoginHandler = async() => {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const result = await signIn('naver', {
+          redirect: false,
+        })
+      } catch (err) {
+        toast.error(getError(err))
+      }
+    }
   return (
     <Layout title="Login">
       <form
@@ -45,7 +87,7 @@ export default function LoginScreen() {
         onSubmit={handleSubmit(submitHandler)}
       >
         <h1 className="mb-4 text-xl">Login</h1>{" "}
-        <div className="mb-4">
+        <div className="mb-4 bg-lime-100 p-4 m-4">
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -63,8 +105,7 @@ export default function LoginScreen() {
           {errors.email && (
             <div className="text-red-500">{errors.email.message}</div>
           )}
-        </div>
-        <div className="mb-4">
+
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -82,6 +123,20 @@ export default function LoginScreen() {
         </div>
         <div className="mb-4">
           <button className="primary-button">Login</button>
+        </div>
+        <div className="p-5 bg-gray-500 rounded-lg">
+          <div className="mb-4">
+            <button className="primary-button w-full" type="button" onClick={githubLoginHandler}>Github로 로그인</button>
+          </div>
+          <div className="mb-4">
+            <button className="primary-button w-full" type="button" onClick={googleLoginHandler}>Google로 로그인</button>
+          </div>
+          <div className="mb-4">
+            <button className="primary-button w-full" type="button" onClick={kakaoLoginHandler}>Kakao로 로그인</button>
+          </div>
+          <div className="mb-4">
+            <button className="primary-button w-full" type="button" onClick={naverLoginHandler}>Naver로 로그인</button>
+          </div>
         </div>
         <div className="mb-4">
           Don&apos;t have an account? &nbsp;{" "}

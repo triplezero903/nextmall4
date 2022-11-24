@@ -1,8 +1,13 @@
 import nextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import User from "../../../models/User";
 import db from "../../../utils/db";
 import bcryptjs from "bcryptjs";
+
+import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github"
+import GoogleProvider from "next-auth/providers/google"
+import KakaoProvider from "next-auth/providers/kakao"
+import NaverProvider from "next-auth/providers/naver"
 
 export default nextAuth({
   session: {
@@ -22,13 +27,13 @@ export default nextAuth({
   },
   providers: [
     CredentialsProvider({
-      async authorize(credentails) {
+      async authorize(credentials) {
         await db.connect();
         const user = await User.findOne({
-          email: credentails.email,
+          email: credentials.email,
         });
         await db.disconnect();
-        if (user && bcryptjs.compareSync(credentails.password, user.password)) {
+        if (user && bcryptjs.compareSync(credentials.password, user.password)) {
           return {
             _id: user._id,
             name: user.name,
@@ -39,6 +44,22 @@ export default nextAuth({
         }
         throw new Error("Invalid email or password");
       },
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    KakaoProvider({
+      clientId: process.env.KAKAO_CLIENT_ID,
+      clientSecret: process.env.KAKAO_CLIENT_SECRET,
+    }),
+    NaverProvider({
+      clientId: process.env.NAVER_CLIENT_ID,
+      clientSecret: process.env.NAVER_CLIENT_SECRET,
     }),
   ],
 });
